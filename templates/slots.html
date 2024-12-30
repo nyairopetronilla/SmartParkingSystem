@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Slots</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Smart Parking</a>
+            <div class="d-flex">
+                {% if 'user' in session %}
+                    <!-- User Profile Icon -->
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>  <!-- Bootstrap Icons -->
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <!-- Login and Register Links -->
+                    <a href="{{ url_for('login') }}" class="btn btn-primary me-2">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Parking Slots</h1>
+        <ul class="list-group" id="slots-list">
+            {% if slots %}
+                {% for slot_id, status in slots.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center" id="slot-{{ slot_id }}">
+                        Slot {{ slot_id }}: {{ status }}
+                        {% if status == 'Available' %}
+                            <button onclick="bookSlot('{{ slot_id }}')" class="btn btn-success">Book Slot</button>
+                        {% else %}
+                            <span class="badge bg-secondary">Booked</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">No parking slots available.</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        function bookSlot(slot_id) {
+            fetch(`/book/${slot_id}`, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        // Update the slot status dynamically
+                        const slotElement = document.getElementById(`slot-${slot_id}`);
+                        slotElement.innerHTML = `
+                            Slot ${slot_id}: Booked
+                            <span class="badge bg-secondary">Booked</span>
+                        `;
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

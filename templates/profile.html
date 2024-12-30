@@ -1,0 +1,78 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Smart Parking</a>
+            <div class="d-flex">
+                {% if 'user' in session %}
+                    <!-- User Profile Icon -->
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>  <!-- Bootstrap Icons -->
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <!-- Login and Register Links -->
+                    <a href="{{ url_for('login') }}" class="btn btn-primary me-2">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Profile</h1>
+        <div class="card">
+            <div class="card-body">
+                <!-- Profile Picture -->
+                <div class="text-center mb-4">
+                    <img src="{{ user.photo_url }}" class="rounded-circle profile-picture" alt="Profile Picture">
+                </div>
+
+                <!-- Upload Profile Picture Form (Only show if default picture is used) -->
+                {% if user.photo_url == 'https://via.placeholder.com/150' %}
+                    <form method="POST" action="{{ url_for('upload_profile_picture') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="profile_picture" class="form-label">Upload Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                {% endif %}
+
+                <!-- User Information -->
+                <h5 class="card-title text-center mt-4">User Information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+                    <li class="list-group-item"><strong>Staff Number:</strong> {{ user.staff_number }}</li>
+                    <li class="list-group-item"><strong>Mobile Number:</strong> {{ user.mobile_number }}</li>
+                    <li class="list-group-item"><strong>Role:</strong> {{ user.role }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
